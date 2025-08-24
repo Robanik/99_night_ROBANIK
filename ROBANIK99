@@ -1,0 +1,608 @@
+-- 🌀 УНИВЕРСАЛЬНОЕ МЕНЮ BY ROBANIK
+local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
+
+-- 🔑 Ключи (можно добавить несколько)
+local VALID_KEYS = {
+    "99NRR",
+}
+
+-- 🔗 Ссылка на получение ключа
+local GET_KEY_LINK = "https://discord.gg/sEHz2Ex7"
+
+local player = game.Players.LocalPlayer
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Окно ввода ключа
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Parent = ScreenGui
+KeyFrame.Size = UDim2.new(0, 300, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
+
+local KeyLabel = Instance.new("TextLabel", KeyFrame)
+KeyLabel.Size = UDim2.new(1, 0, 0, 40)
+KeyLabel.BackgroundTransparency = 1
+KeyLabel.Text = "Введите ключ:"
+KeyLabel.Font = Enum.Font.GothamBold
+KeyLabel.TextSize = 18
+KeyLabel.TextColor3 = Color3.fromRGB(255,255,255)
+
+local KeyBox = Instance.new("TextBox", KeyFrame)
+KeyBox.Size = UDim2.new(0.8, 0, 0, 35)
+KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyBox.PlaceholderText = "Ваш ключ..."
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 16
+KeyBox.BackgroundColor3 = Color3.fromRGB(35,35,35)
+KeyBox.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0,8)
+
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+SubmitBtn.Size = UDim2.new(0.6, 0, 0, 35)
+SubmitBtn.Position = UDim2.new(0.2, 0, 0.65, 0)
+SubmitBtn.Text = "Подтвердить"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 16
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+SubmitBtn.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0,8)
+
+local GetKeyBtn = Instance.new("TextButton", KeyFrame)
+GetKeyBtn.Size = UDim2.new(0.6, 0, 0, 35)
+GetKeyBtn.Position = UDim2.new(0.2, 0, 0.82, 0)
+GetKeyBtn.Text = "Get Key"
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.TextSize = 16
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+GetKeyBtn.TextColor3 = Color3.fromRGB(0,0,0)
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0,8)
+
+-- Главное меню
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.Size = UDim2.new(0, 500, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Visible = false
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 15)
+
+-- Шапка меню
+local HeaderLabel = Instance.new("TextLabel", MainFrame)
+HeaderLabel.Size = UDim2.new(1, 0, 0, 40)
+HeaderLabel.Position = UDim2.new(0, 10, 0, 10)
+HeaderLabel.BackgroundTransparency = 1
+HeaderLabel.TextColor3 = Color3.fromRGB(255,255,255)
+HeaderLabel.Font = Enum.Font.GothamBold
+HeaderLabel.TextSize = 16
+HeaderLabel.Text = "BY ROBANIK | 99 NIGHT IN THE FOREST"
+
+-- Вкладки
+local TabScroll = Instance.new("ScrollingFrame")
+TabScroll.Parent = MainFrame
+TabScroll.Size = UDim2.new(1, -20, 0, 40)
+TabScroll.Position = UDim2.new(0, 10, 0, 60)
+TabScroll.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TabScroll.ScrollBarThickness = 6
+TabScroll.CanvasSize = UDim2.new(0,0,0,0)
+TabScroll.ScrollBarImageColor3 = Color3.fromRGB(0,170,255)
+TabScroll.BorderSizePixel = 0
+Instance.new("UICorner", TabScroll).CornerRadius = UDim.new(0, 10)
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.Parent = TabScroll
+
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Parent = MainFrame
+ContentFrame.Size = UDim2.new(1, -20, 1, -110)
+ContentFrame.Position = UDim2.new(0, 10, 0, 110)
+ContentFrame.BackgroundTransparency = 1
+
+-- Хранилища
+local Pages = {}
+local CurrentPage = nil
+
+-- 📌 Функция добавления вкладки
+local function AddTab(name)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 120, 1, 0)
+    btn.Text = name
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 18
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.BackgroundTransparency = 1
+    btn.Parent = TabScroll
+
+    wait()
+    TabScroll.CanvasSize = UDim2.new(0, UIListLayout.AbsoluteContentSize.X + 10, 0, 0)
+
+    local page = Instance.new("ScrollingFrame", ContentFrame)
+    page.Size = UDim2.new(1,0,1,0)
+    page.CanvasSize = UDim2.new(0,0,0,0)
+    page.ScrollBarThickness = 6
+    page.Visible = false
+    page.BackgroundTransparency = 1
+    Pages[name] = page
+
+    btn.MouseButton1Click:Connect(function()
+        if CurrentPage then CurrentPage.Visible = false end
+        page.Visible = true
+        CurrentPage = page
+    end)
+
+    if not CurrentPage then
+        page.Visible = true
+        CurrentPage = page
+    end
+end
+
+-- 📌 Функция добавления кнопки
+local function AddButton(tabName, text, callback)
+    local page = Pages[tabName]
+    if not page then return warn("Вкладка "..tabName.." не найдена!") end
+
+    local btn = Instance.new("TextButton", page)
+    btn.Size = UDim2.new(0, 200, 0, 40)
+    btn.Position = UDim2.new(0, 20, 0, (#page:GetChildren()-1)*50)
+    btn.Text = text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 18
+    btn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+
+    page.CanvasSize = UDim2.new(0,0,0,(#page:GetChildren()-1)*50+60)
+
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-- Кнопка открытия меню (после ввода ключа)
+local OpenButton = Instance.new("ImageButton")
+OpenButton.Parent = ScreenGui
+OpenButton.Size = UDim2.new(0, 60, 0, 60)
+OpenButton.Position = UDim2.new(0, 20, 0.5, -30)
+OpenButton.BackgroundTransparency = 1
+OpenButton.Image = BUTTON_IMAGE_ID
+OpenButton.ScaleType = Enum.ScaleType.Fit
+OpenButton.Visible = false
+Instance.new("UICorner", OpenButton).CornerRadius = UDim.new(1, 0)
+
+local menuOpen = false
+OpenButton.MouseButton1Click:Connect(function()
+    menuOpen = not menuOpen
+    MainFrame.Visible = menuOpen
+end)
+
+-- Проверка ключа
+SubmitBtn.MouseButton1Click:Connect(function()
+    local input = KeyBox.Text
+    for _, key in ipairs(VALID_KEYS) do
+        if input == key then
+            KeyFrame.Visible = false
+            OpenButton.Visible = true
+            return
+        end
+    end
+    KeyLabel.Text = "❌ Неверный ключ!"
+    KeyLabel.TextColor3 = Color3.fromRGB(255,100,100)
+end)
+
+-- 📌 Кнопка Get Key (копирует ссылку)
+GetKeyBtn.MouseButton1Click:Connect(function()
+    setclipboard(GET_KEY_LINK) -- ⚡ копирует ссылку
+    KeyLabel.Text = "✔️ Ссылка скопирована!"
+    KeyLabel.TextColor3 = Color3.fromRGB(100,255,100)
+end)
+
+-- 📌 Пример
+AddTab("Home")
+AddTab("Player")
+AddTab("Tp")
+AddTab("Esp")
+AddTab("Info")
+AddTab("Credit")
+
+------------------------------------------------
+
+AddButton("Home", "Hello ...", function()
+end)
+
+------------------------------------------------
+
+AddButton("Tp", "Teleport To Players", function()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Создание GUI
+local screenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+screenGui.Name = "TPMenu"
+
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+
+-- Выбранный игрок
+local selectedPlayer = nil
+
+-- Список игроков
+local uiList = Instance.new("UIListLayout", frame)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Заголовок
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Выбери игрока:"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+
+-- Кнопки игроков
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        local btn = Instance.new("TextButton", frame)
+        btn.Size = UDim2.new(1, 0, 0, 30)
+        btn.Text = player.Name
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.Font = Enum.Font.SourceSans
+        btn.TextSize = 18
+
+        btn.MouseButton1Click:Connect(function()
+            selectedPlayer = player
+            -- Подсветка выбора
+            for _, otherBtn in pairs(frame:GetChildren()) do
+                if otherBtn:IsA("TextButton") then
+                    otherBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                end
+            end
+            btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        end)
+    end
+end
+
+-- Кнопка "ТП"
+local tpButton = Instance.new("TextButton", frame)
+tpButton.Size = UDim2.new(1, 0, 0, 30)
+tpButton.Text = "Телепортироваться"
+tpButton.BackgroundColor3 = Color3.fromRGB(70, 120, 70)
+tpButton.TextColor3 = Color3.new(1, 1, 1)
+tpButton.Font = Enum.Font.SourceSansBold
+tpButton.TextSize = 18
+
+tpButton.MouseButton1Click:Connect(function()
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            char.HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(2, 0, 0)
+        end
+    end
+    screenGui:Destroy() -- Удалить меню после ТП
+end)
+end)
+
+AddButton("Tp", "Tp To Childs", function()
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "TPGui"
+gui.ResetOnSpawn = false
+
+local selectedName = nil
+
+local buttonNames = {
+	"Lost Child",
+	"Lost Child2",
+	"Lost Child3",
+	"Lost Child4"
+}
+
+-- Функция отображения надписи
+local function showMessage(text, duration)
+	local label = Instance.new("TextLabel", gui)
+	label.Size = UDim2.new(1, 0, 0.2, 0)
+	label.Position = UDim2.new(0, 0, 0.4, 0)
+	label.Text = text
+	label.TextScaled = true
+	label.BackgroundTransparency = 1
+	label.TextColor3 = Color3.new(1, 0, 0)
+
+	task.delay(duration, function()
+		if gui then gui:Destroy() end
+	end)
+end
+
+-- Функция телепорта
+local function teleportTo(name)
+	local character = player.Character or player.CharacterAdded:Wait()
+	local root = character:WaitForChild("HumanoidRootPart")
+	local chars = workspace:FindFirstChild("Characters")
+
+	if chars and chars:FindFirstChild(name) and chars[name]:FindFirstChild("Torso") then
+		root.CFrame = chars[name].Torso.CFrame + Vector3.new(0, 5, 0)
+	else
+		showMessage("Не найдено", 2)
+		return
+	end
+
+	-- Успешный телепорт → закрыть GUI
+	gui:Destroy()
+end
+
+-- Кнопки выбора
+for i, name in ipairs(buttonNames) do
+	local btn = Instance.new("TextButton", gui)
+	btn.Size = UDim2.new(0.3, 0, 0.08, 0)
+	btn.Position = UDim2.new(0.1, 0, 0.1 + (i - 1) * 0.1, 0)
+	btn.Text = name
+	btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.TextScaled = true
+	btn.BorderSizePixel = 0
+
+	btn.MouseButton1Click:Connect(function()
+		selectedName = name
+		for _, child in pairs(gui:GetChildren()) do
+			if child:IsA("TextButton") and child ~= btn then
+				child.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+			end
+		end
+		btn.BackgroundColor3 = Color3.fromRGB(30, 130, 30)
+	end)
+end
+
+-- Кнопка ТП
+local tpBtn = Instance.new("TextButton", gui)
+tpBtn.Size = UDim2.new(0.5, 0, 0.1, 0)
+tpBtn.Position = UDim2.new(0.25, 0, 0.6, 0)
+tpBtn.Text = "ТП"
+tpBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+tpBtn.TextColor3 = Color3.new(1, 1, 1)
+tpBtn.TextScaled = true
+tpBtn.BorderSizePixel = 0
+
+tpBtn.MouseButton1Click:Connect(function()
+	if selectedName then
+		teleportTo(selectedName)
+	else
+		showMessage("Цель не выбрана", 2)
+	end
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Esp", "Esp Rabbits", function()
+Callback = function()
+   local characters = game:GetService("Workspace"):WaitForChild("Characters")
+
+for _, character in pairs(characters:GetChildren()) do
+    if character:FindFirstChild("Tail") then
+        -- Добавляем Highlight
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "RabbitHighlight"
+        highlight.Adornee = character
+        highlight.FillColor = Color3.fromRGB(0, 255, 0) -- зеленый цвет
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.FillTransparency = 0.2
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Parent = character
+
+        -- Добавляем BillboardGui с надписью "rabbit"
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "RabbitLabel"
+        billboard.Adornee = character.Tail
+        billboard.Size = UDim2.new(0, 100, 0, 40)
+        billboard.StudsOffset = Vector3.new(0, 3, 0)
+        billboard.AlwaysOnTop = true
+
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.Text = "rabbit"
+        textLabel.TextColor3 = Color3.new(1, 1, 1)
+        textLabel.TextScaled = true
+        textLabel.Parent = billboard
+
+        billboard.Parent = character.Tail
+    end
+end)
+end)
+
+AddButton("Esp", "Esp Wolfs", function()
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+
+local espFolder = Instance.new("Folder", Workspace)
+espFolder.Name = "ESP_Labels"
+
+-- Функция для создания BillboardGui над головой
+local function createESP(head)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "WolfESP"
+    billboard.Adornee = head
+    billboard.Size = UDim2.new(0, 100, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel", billboard)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = "wolf"
+    label.TextColor3 = Color3.new(1, 0, 0)
+    label.TextStrokeTransparency = 0
+    label.TextScaled = true
+    label.Font = Enum.Font.SourceSansBold
+
+    billboard.Parent = espFolder
+end
+
+-- Проверка, есть ли уже ESP
+local function hasESP(head)
+    for _, gui in ipairs(espFolder:GetChildren()) do
+        if gui:IsA("BillboardGui") and gui.Adornee == head then
+            return true
+        end
+    end
+    return false
+end
+
+-- Обновление ESP
+local function updateESP()
+    for _, char in pairs(Workspace.Characters:GetChildren()) do
+        if char:FindFirstChild("Head") and char.Name == "Wolf" and not hasESP(char.Head) then
+            createESP(char.Head)
+        end
+    end
+
+    -- Удаление ESP, если волка больше нет
+    for _, gui in ipairs(espFolder:GetChildren()) do
+        if not gui.Adornee or not gui.Adornee:IsDescendantOf(Workspace.Characters) then
+            gui:Destroy()
+        end
+    end
+end
+
+-- Обновление каждый кадр
+RunService.RenderStepped:Connect(updateESP)
+end)
+end)
+
+AddButton("Esp", "Esp Deer", function()
+local deer = game:GetService("Workspace"):WaitForChild("Characters"):WaitForChild("Deer")
+local hrp = deer:WaitForChild("HRP")
+
+-- Подсветка
+local highlight = Instance.new("Highlight")
+highlight.Name = "DeerHighlight"
+highlight.Adornee = deer
+highlight.FillColor = Color3.fromRGB(255, 0, 0) -- красный цвет
+highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+highlight.FillTransparency = 0.2
+highlight.OutlineTransparency = 0
+highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- сквозь стены
+highlight.Parent = deer
+
+-- Надпись "deer" над HRP
+local billboard = Instance.new("BillboardGui")
+billboard.Name = "DeerLabel"
+billboard.Adornee = hrp
+billboard.Size = UDim2.new(0, 100, 0, 40)
+billboard.StudsOffset = Vector3.new(0, 3, 0)
+billboard.AlwaysOnTop = true
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "deer"
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.TextScaled = true
+textLabel.Parent = billboard
+
+billboard.Parent = hrp
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Items", "log", function()
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local targetPart = Workspace.Items.Log.Meshes.log_Cylinder
+
+local function teleportToObjectAndBack()
+    -- Сохраняем начальную позицию игрока
+    local startPosition = humanoidRootPart.CFrame
+
+    -- Телепортируем игрока к объекту (немного выше, чтобы не застрять)
+    humanoidRootPart.CFrame = targetPart.CFrame * CFrame.new(0, 3, 0)
+    wait(1)  -- Ждем секунду, чтобы "увидеть" телепорт
+
+    -- Возвращаем игрока обратно
+    humanoidRootPart.CFrame = startPosition
+    wait(0.5)
+
+    -- Перемещаем объект чуть вперед от игрока (например, 3 единицы вперед по направлению взгляда)
+    local forwardVector = humanoidRootPart.CFrame.LookVector
+    targetPart.CFrame = humanoidRootPart.CFrame * CFrame.new(forwardVector * 3)
+end
+
+teleportToObjectAndBack()
+   end,
+end)
+
+AddButton("Items", "coal", function()
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local targetPart = Workspace.Items.Coal.Coal
+
+local function teleportToCoalAndBack()
+    -- Сохраняем начальную позицию игрока
+    local startPosition = humanoidRootPart.CFrame
+
+    -- Телепортируем игрока к объекту (чуть выше)
+    humanoidRootPart.CFrame = targetPart.CFrame * CFrame.new(0, 3, 0)
+    wait(1)
+
+    -- Возвращаем игрока обратно
+    humanoidRootPart.CFrame = startPosition
+    wait(0.5)
+
+    -- Перемещаем объект немного вперед от игрока (3 единицы вперед по направлению взгляда)
+    local forwardVector = humanoidRootPart.CFrame.LookVector
+    targetPart.CFrame = humanoidRootPart.CFrame * CFrame.new(forwardVector * 3)
+end
+
+teleportToCoalAndBack()
+   end,
+end)
+
+AddButton("Items", "fuel canister", function()
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local targetPart = Workspace.Items["Fuel Canister"].Main
+
+local function teleportToFuelCanisterAndBack()
+    -- Сохраняем стартовую позицию игрока
+    local startPosition = humanoidRootPart.CFrame
+
+    -- Телепортируем к объекту (чуть выше)
+    humanoidRootPart.CFrame = targetPart.CFrame * CFrame.new(0, 3, 0)
+    wait(1)
+
+    -- Возвращаемся обратно
+    humanoidRootPart.CFrame = startPosition
+    wait(0.5)
+
+    -- Перемещаем объект чуть вперед от игрока (3 единицы вперед по направлению взгляда)
+    local forwardVector = humanoidRootPart.CFrame.LookVector
+    targetPart.CFrame = humanoidRootPart.CFrame * CFrame.new(forwardVector * 3)
+end
+
+teleportToFuelCanisterAndBack()
+   end,
+end)
+
