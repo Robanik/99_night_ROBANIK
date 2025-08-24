@@ -541,7 +541,7 @@ local function teleportToObjectAndBack()
 end
 
 teleportToObjectAndBack()
-end)
+   end,
 end)
 
 AddButton("Items", "coal", function()
@@ -572,7 +572,7 @@ local function teleportToCoalAndBack()
 end
 
 teleportToCoalAndBack()
-end)
+   end,
 end)
 
 AddButton("Items", "fuel canister", function()
@@ -603,7 +603,7 @@ local function teleportToFuelCanisterAndBack()
 end
 
 teleportToFuelCanisterAndBack()
-end)
+   end,
 end)
 
 AddButton("Items", "radio", function()
@@ -634,7 +634,7 @@ local function teleportToOldRadioAndBack()
 end
 
 teleportToOldRadioAndBack()
-end)
+   end,
 end)
 
 ------------------------------------------------
