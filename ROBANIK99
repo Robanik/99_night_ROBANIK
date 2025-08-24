@@ -606,3 +606,111 @@ teleportToFuelCanisterAndBack()
    end,
 end)
 
+AddButton("Items", "radio", function()
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local targetPart = Workspace.Items["Old Radio"].Main
+
+local function teleportToOldRadioAndBack()
+    -- Сохраняем стартовую позицию игрока
+    local startPosition = humanoidRootPart.CFrame
+
+    -- Телепортируем к объекту (чуть выше)
+    humanoidRootPart.CFrame = targetPart.CFrame * CFrame.new(0, 3, 0)
+    wait(1)
+
+    -- Возвращаемся обратно
+    humanoidRootPart.CFrame = startPosition
+    wait(0.5)
+
+    -- Перемещаем объект чуть вперед от игрока (3 единицы вперед по направлению взгляда)
+    local forwardVector = humanoidRootPart.CFrame.LookVector
+    targetPart.CFrame = humanoidRootPart.CFrame * CFrame.new(forwardVector * 3)
+end
+
+teleportToOldRadioAndBack()
+   end,
+end)
+
+------------------------------------------------
+
+AddButton("Info", "Pelt trader", function()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+
+-- Функция для отображения текста
+local function showMessage(text, duration)
+    StarterGui:SetCore("ChatMakeSystemMessage", {
+        Text = text;
+        Color = Color3.new(0, 0, 0); -- Черный цвет
+        Font = Enum.Font.SourceSansBold;
+        FontSize = Enum.FontSize.Size24;
+    })
+    
+    task.wait(duration)
+
+    -- Очистка сообщения (по желанию, так как системные сообщения нельзя удалить напрямую)
+end
+
+-- Отслеживание появления персонажа Pelt Trader
+local function checkForPeltTrader()
+    local characters = game:GetService("Workspace"):WaitForChild("Characters")
+
+    characters.ChildAdded:Connect(function(child)
+        if child.Name == "Pelt Trader" then
+            local hrp = child:WaitForChild("HumanoidRootPart", 5)
+            if hrp then
+                showMessage("Pelt Trader пришел", 2)
+            end
+        end
+    end)
+end
+end)
+
+AddButton("Info", "Deer", function()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local function showCenterText(text, duration)
+    local gui = Instance.new("ScreenGui", playerGui)
+    gui.Name = "DeerMessage"
+
+    local label = Instance.new("TextLabel", gui)
+    label.Size = UDim2.new(1, 0, 0, 50)
+    label.Position = UDim2.new(0, 0, 0.45, 0)
+    label.Text = text
+    label.TextColor3 = Color3.new(0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.TextScaled = true
+    label.Font = Enum.Font.SourceSansBold
+
+    task.wait(duration)
+    gui:Destroy()
+end
+
+local characters = game:GetService("Workspace"):WaitForChild("Characters")
+
+characters.ChildAdded:Connect(function(child)
+    if child.Name == "Deer" then
+        local hrp = child:WaitForChild("HumanoidRootPart", 5)
+        if hrp then
+            showCenterText("Deer пришел", 2)
+        end
+    end
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Credit", "CREDIT", function()
+end)
+
+AddButton("Credit", "ROBANIK", function()
+end)
