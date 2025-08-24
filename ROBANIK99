@@ -287,7 +287,6 @@ tpButton.MouseButton1Click:Connect(function()
     end
     screenGui:Destroy() -- Удалить меню после ТП
 end)
-end)
 
 AddButton("Tp", "Tp To Childs", function()
 local player = game.Players.LocalPlayer
@@ -375,7 +374,6 @@ tpBtn.MouseButton1Click:Connect(function()
 		showMessage("Цель не выбрана", 2)
 	end
 end)
-end)
 
 ------------------------------------------------
 
@@ -414,7 +412,6 @@ for _, character in pairs(characters:GetChildren()) do
 
         billboard.Parent = character.Tail
     end
-end)
 end)
 
 AddButton("Esp", "Esp Wolfs", function()
@@ -474,7 +471,6 @@ end
 -- Обновление каждый кадр
 RunService.RenderStepped:Connect(updateESP)
 end)
-end)
 
 AddButton("Esp", "Esp Deer", function()
 local deer = game:GetService("Workspace"):WaitForChild("Characters"):WaitForChild("Deer")
@@ -508,7 +504,6 @@ textLabel.TextScaled = true
 textLabel.Parent = billboard
 
 billboard.Parent = hrp
-end)
 end)
 
 ------------------------------------------------
@@ -671,7 +666,6 @@ local function checkForPeltTrader()
         end
     end
 end)
-end)
 
 AddButton("Info", "Deer", function()
 local Players = game:GetService("Players")
@@ -704,7 +698,6 @@ characters.ChildAdded:Connect(function(child)
             showCenterText("Deer пришел", 2)
         end
     end
-end)
 end)
 
 ------------------------------------------------
